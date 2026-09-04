@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app import db
 
 
@@ -11,5 +13,6 @@ def test_save_request_persists(tmp_path, monkeypatch) -> None:
 
     history = db.get_history()
     assert len(history) == 1
+    datetime.strptime(history[0]["timestamp"], "%d.%m.%Y %H:%M")
     assert history[0]["orange"] == 3
     assert history[0]["total"] == 6

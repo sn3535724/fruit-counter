@@ -19,7 +19,7 @@ STATIC_DIR = BASE_DIR / "static"
 RESULTS_DIR = STATIC_DIR / "results"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-app = FastAPI(title="Fruit Counter")
+app = FastAPI(title="Подсчёт фруктов в магазине/на конвейере")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
