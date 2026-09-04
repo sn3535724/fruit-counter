@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
+from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from openpyxl import Workbook
@@ -8,15 +9,28 @@ from openpyxl.styles import Font
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
-HEADERS = ["timestamp", "apple", "banana", "orange", "total"]
+FIELDS = ["timestamp", "apple", "banana", "orange", "total"]
+HEADERS = ["Дата и время (МСК)", "Яблоки", "Бананы", "Апельсины", "Всего"]
+PDF_FONT = "Helvetica"
+
+for font_path in (
+    Path("C:/Windows/Fonts/arial.ttf"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+):
+    if font_path.exists():
+        pdfmetrics.registerFont(TTFont("ReportFont", str(font_path)))
+        PDF_FONT = "ReportFont"
+        break
 
 
 def _rows(history: Sequence[Mapping[str, Any]]) -> list[list[Any]]:
     return [
-        [entry.get(column, "") for column in HEADERS]
+        [entry.get(column, "") for column in FIELDS]
         for entry in history
     ]
 
@@ -38,7 +52,7 @@ def export_pdf(history: Sequence[Mapping[str, Any]]) -> BytesIO:
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1f2937")),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTNAME", (0, 0), (-1, -1), PDF_FONT),
                 ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
                 ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f1f5f9")]),
                 ("ALIGN", (1, 1), (-1, -1), "CENTER"),
@@ -56,7 +70,7 @@ def export_pdf(history: Sequence[Mapping[str, Any]]) -> BytesIO:
 def export_excel(history: Sequence[Mapping[str, Any]]) -> BytesIO:
     workbook = Workbook()
     worksheet = workbook.active
-    worksheet.title = "History"
+    worksheet.title = "История"
     worksheet.append(HEADERS)
     for cell in worksheet[1]:
         cell.font = Font(bold=True)

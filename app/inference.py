@@ -14,7 +14,7 @@ model = YOLO("yolov8n.pt")
 
 
 def detect(image: np.ndarray) -> tuple[np.ndarray, dict[str, int]]:
-    """Detect target fruits and return an annotated image with their counts."""
+    """Найти фрукты и вернуть изображение с рамками и подсчётом."""
     counts = {"apple": 0, "banana": 0, "orange": 0, "total": 0}
     annotated = image.copy()
     result = model.predict(
