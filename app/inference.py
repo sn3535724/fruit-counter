@@ -8,7 +8,7 @@ from ultralytics import YOLO
 TARGET_CLASSES = {"apple", "banana", "orange"}
 TARGET_CLASS_IDS = [46, 47, 49]
 CONFIDENCE_THRESHOLD = 0.25
-IOU_THRESHOLD = 0.45
+IOU_THRESHOLD = 0.55
 IMAGE_SIZE = 1280
 model = YOLO("yolov8n.pt")
 
