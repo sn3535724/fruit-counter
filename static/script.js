@@ -43,11 +43,29 @@ form.addEventListener('submit', async (event) => {
     });
     emptyResult.hidden = true;
     resultContent.hidden = false;
+    if (!historyContent.hidden) await loadHistory();
     statusText.textContent = 'Готово. Результат сохранён в истории.';
   } catch (error) {
     statusText.textContent = error.message;
   }
 });
+
+async function loadHistory() {
+  const response = await fetch('/history');
+  if (!response.ok) throw new Error('Не удалось загрузить историю');
+  const history = await response.json();
+  historyList.replaceChildren();
+  history.forEach((entry) => {
+    const row = document.createElement('tr');
+    [entry.timestamp, entry.apple, entry.banana, entry.orange, entry.total]
+      .forEach((value) => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.append(cell);
+    });
+    historyList.append(row);
+  });
+}
 
 historyButton.addEventListener('click', async () => {
   if (!historyContent.hidden) {
@@ -59,20 +77,7 @@ historyButton.addEventListener('click', async () => {
   historyButton.disabled = true;
   historyButton.textContent = 'Загрузка...';
   try {
-    const response = await fetch('/history');
-    if (!response.ok) throw new Error('Не удалось загрузить историю');
-    const history = await response.json();
-    historyList.replaceChildren();
-    history.forEach((entry) => {
-      const row = document.createElement('tr');
-      [entry.timestamp, entry.apple, entry.banana, entry.orange, entry.total]
-        .forEach((value) => {
-          const cell = document.createElement('td');
-          cell.textContent = value;
-          row.append(cell);
-        });
-      historyList.append(row);
-    });
+    await loadHistory();
     historyContent.hidden = false;
     historyButton.textContent = 'Скрыть историю';
   } catch (error) {
