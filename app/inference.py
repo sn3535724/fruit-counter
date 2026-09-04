@@ -24,6 +24,7 @@ def detect(image: np.ndarray) -> tuple[np.ndarray, dict[str, int]]:
         agnostic_nms=True,
         classes=TARGET_CLASS_IDS,
         imgsz=IMAGE_SIZE,
+        augment=True,
         verbose=False,
     )[0]
     names = result.names
