@@ -6,7 +6,9 @@ from ultralytics import YOLO
 
 
 TARGET_CLASSES = {"apple", "banana", "orange"}
-CONFIDENCE_THRESHOLD = 0.15
+TARGET_CLASS_IDS = [46, 47, 49]
+CONFIDENCE_THRESHOLD = 0.25
+IOU_THRESHOLD = 0.45
 IMAGE_SIZE = 1280
 model = YOLO("yolov8n.pt")
 
@@ -18,6 +20,9 @@ def detect(image: np.ndarray) -> tuple[np.ndarray, dict[str, int]]:
     result = model.predict(
         source=image,
         conf=CONFIDENCE_THRESHOLD,
+        iou=IOU_THRESHOLD,
+        agnostic_nms=True,
+        classes=TARGET_CLASS_IDS,
         imgsz=IMAGE_SIZE,
         verbose=False,
     )[0]
