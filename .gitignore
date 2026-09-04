@@ -1,0 +1,17 @@
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+history.db
+*.pt
+static/results/*.jpg
+static/results/*.jpeg
+static/results/*.png
+
+*.docx
+*.pdf
