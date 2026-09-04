@@ -2,9 +2,7 @@ const form = document.querySelector('#process-form');
 const fileInput = document.querySelector('#image-file');
 const fileLabel = document.querySelector('#file-label');
 const statusText = document.querySelector('#status');
-const emptyResult = document.querySelector('#empty-result');
-const resultContent = document.querySelector('#result-content');
-const resultImage = document.querySelector('#result-image');
+const resultContainer = document.querySelector('#result');
 const countsContainer = document.querySelector('#counts');
 const historyButton = document.querySelector('#history-button');
 const historyContent = document.querySelector('#history-content');
@@ -33,16 +31,24 @@ form.addEventListener('submit', async (event) => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || 'Не удалось обработать файл');
 
+    resultContainer.replaceChildren();
+    const resultImage = document.createElement('img');
     resultImage.src = `${data.image_url}?t=${Date.now()}`;
+    resultImage.alt = 'Обработанное изображение';
+    resultContainer.append(resultImage);
+
     countsContainer.replaceChildren();
     Object.entries(data.counts).forEach(([key, value]) => {
       const item = document.createElement('div');
       item.className = 'count-item';
-      item.innerHTML = `<strong>${value}</strong><span>${labels[key]}</span>`;
+      const valueElement = document.createElement('strong');
+      valueElement.textContent = value;
+      const labelElement = document.createElement('span');
+      labelElement.textContent = labels[key];
+      item.append(valueElement, labelElement);
       countsContainer.append(item);
     });
-    emptyResult.hidden = true;
-    resultContent.hidden = false;
+    countsContainer.hidden = false;
     if (!historyContent.hidden) await loadHistory();
     statusText.textContent = 'Готово. Результат сохранён в истории.';
   } catch (error) {
